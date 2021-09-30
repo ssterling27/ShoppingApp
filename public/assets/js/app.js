@@ -18,7 +18,7 @@ axios.get('/api/items', {
     document.getElementById('appearHere').append(itemElem)
   })
 })
-.catch(err => console.log(err))
+.catch(err => window.location = '/login.html')
 
 document.getElementById('add').addEventListener('click', event => {
   event.preventDefault()
