@@ -18,7 +18,7 @@ axios.get('/api/items', {
     document.getElementById('appearHere').append(itemElem)
   })
 })
-.catch(err => console.log(err))
+.catch(err => window.location = '/login.html')
 
 document.getElementById('add').addEventListener('click', event => {
   event.preventDefault()
@@ -46,7 +46,9 @@ document.getElementById('add').addEventListener('click', event => {
         <p><a type="button" class="btn btn-danger" href="${item.video_link}">Video Link</a><p>
     `
     document.getElementById('appearHere').append(itemElem)
-    document.getElementById('task').value = ''
+    document.getElementById('product').value = ''
+    document.getElementById('shoppingLink').value = ''
+    document.getElementById('videoLink').value = ''
   })
   .catch(err => console.log(err))
 })
