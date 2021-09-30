@@ -5,13 +5,17 @@ const Item = new Schema({
     type: String,
     required: true
   },
-  isDone: {
-    type: Boolean,
-    required: true
-  },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'User',
+    required: true
+  },
+  shopping_link: {
+    type: String,
+    required: true
+  },
+  video_link: {
+    type: String,
     required: true
   }
 }, { timestamps: true })

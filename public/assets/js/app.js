@@ -1,74 +1,60 @@
-axios.get('/api/items')
-.then(({data: items}) => {
-  items.forEach(item => {
-    const itemElem = document.createElement('div')
-    itemElem.classList = 'col-sm-3'
-    itemElem.style = 'margin-top: 25px;'
-    itemElem.innerHTML = `
+axios.get('/api/items', {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem('token')}`
+  }
+})
+  .then(({ data: items }) => {
+    items.forEach(item => {
+      const itemElem = document.createElement('div')
+      itemElem.classList = 'col-sm-3'
+      itemElem.style = 'margin-top: 25px;'
+      itemElem.innerHTML = `
     <div class="card">
       <div class="card-body" id=${item._id}>
         <h5 class="card-title" style="margin-bottom: 20px;">${item.text}</h5>
-        ${item.isDone ? '<button type="button" class="btn btn-info isDone">Done</button>' : '<button type="button" class="btn btn-warning isDone">Not Done</button>'}
-        <button type="button" class="btn btn-danger delete">Delete</button>
+        <p><a type="button" class="btn btn-info" href="${item.shopping_link}">Shopping Link</a></p>
+        <p><a type="button" class="btn btn-danger" href="${item.video_link}">Video Link</a><p>
     `
-    document.getElementById('appearHere').append(itemElem)
+      document.getElementById('appearHere').append(itemElem)
+    })
   })
-})
-.catch(err => console.log(err))
+
+.catch(err => window.location = '/login.html')
 
 document.getElementById('add').addEventListener('click', event => {
   event.preventDefault()
-  let task = document.getElementById('task').value
+  let task = document.getElementById('product').value
+  let shoppingLink = document.getElementById('shoppingLink').value
+  let videoLink = document.getElementById('videoLink').value
   axios.post('/api/items', {
     text: task,
-    isDone: false
+    shopping_link: shoppingLink,
+    video_link: videoLink
+  }, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
   })
-  .then(({data: item}) => {
-    const itemElem = document.createElement('div')
-    itemElem.classList = 'col-sm-3'
-    itemElem.style = 'margin-top: 25px;'
-    itemElem.innerHTML = `
+    .then(({ data: item }) => {
+      const itemElem = document.createElement('div')
+      itemElem.classList = 'col-sm-3'
+      itemElem.style = 'margin-top: 25px;'
+      itemElem.innerHTML = `
     <div class="card">
       <div class="card-body" id=${item._id}>
         <h5 class="card-title" style="margin-bottom: 20px;">${item.text}</h5>
-        ${item.isDone ? '<button type="button" class="btn btn-info isDone">Done</button>' : '<button type="button" class="btn btn-warning isDone">Not Done</button>'}
-        <button type="button" class="btn btn-danger delete">Delete</button>
+        <p><a type="button" class="btn btn-info" href="${item.shopping_link}">Shopping Link</a></p>
+        <p><a type="button" class="btn btn-danger" href="${item.video_link}">Video Link</a><p>
     `
-    document.getElementById('appearHere').append(itemElem)
-    document.getElementById('task').value = ''
-  })
-  .catch(err => console.log(err))
+
+      document.getElementById('appearHere').append(itemElem)
+      document.getElementById('product').value = ''
+      document.getElementById('shoppingLink').value = ''
+      document.getElementById('videoLink').value = ''
+    })
+    .catch(err => console.log(err))
 })
 
-document.addEventListener('click', event => {
-  if (event.target.classList.contains('delete')) {
-    axios.delete(`/api/items/${event.target.parentNode.id}`)
-    .then(() => {
-      event.target.parentNode.parentNode.parentNode.remove()
-    })
-  }
-  if (event.target.classList.contains('isDone')) {
-    switch(event.target.innerText) {
-      case 'Done':
-        axios.put(`/api/items/${event.target.parentNode.id}`, {
-          isDone: false
-        })
-        .then(() => {
-          event.target.innerText = 'Not Done'
-          event.target.classList = 'btn btn-warning isDone'
-        })
-        .catch(err => console.log(err))
-        break;
-      case 'Not Done':
-        axios.put(`/api/items/${event.target.parentNode.id}`, {
-          isDone: true
-        })
-          .then(() => {
-            event.target.innerText = 'Done'
-            event.target.classList = 'btn btn-info isDone'
-          })
-          .catch(err => console.log(err))
-        break;
-    }
-  }
-})
+document.getElementById('logout').addEventListener('click', event => {
+  localStorage.removeItem('token')
+  window.location = './login.html'
