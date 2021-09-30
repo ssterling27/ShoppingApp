@@ -1,4 +1,8 @@
-axios.get('/api/items')
+axios.get('/api/items', {
+  headers: {
+    Authorization: `Bearer ${localStorage.getItem('token')}`
+  }
+})
 .then(({data: items}) => {
   items.forEach(item => {
     const itemElem = document.createElement('div')
@@ -8,8 +12,8 @@ axios.get('/api/items')
     <div class="card">
       <div class="card-body" id=${item._id}>
         <h5 class="card-title" style="margin-bottom: 20px;">${item.text}</h5>
-        ${item.isDone ? '<button type="button" class="btn btn-info isDone">Done</button>' : '<button type="button" class="btn btn-warning isDone">Not Done</button>'}
-        <button type="button" class="btn btn-danger delete">Delete</button>
+        <p><a type="button" class="btn btn-info" href="${item.shopping_link}">Shopping Link</a></p>
+        <p><a type="button" class="btn btn-danger" href="${item.video_link}">Video Link</a><p>
     `
     document.getElementById('appearHere').append(itemElem)
   })
@@ -18,10 +22,17 @@ axios.get('/api/items')
 
 document.getElementById('add').addEventListener('click', event => {
   event.preventDefault()
-  let task = document.getElementById('task').value
+  let task = document.getElementById('product').value
+  let shoppingLink = document.getElementById('shoppingLink').value
+  let videoLink = document.getElementById('videoLink').value
   axios.post('/api/items', {
     text: task,
-    isDone: false
+    shopping_link: shoppingLink,
+    video_link: videoLink
+  }, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`
+    }
   })
   .then(({data: item}) => {
     const itemElem = document.createElement('div')
@@ -31,44 +42,11 @@ document.getElementById('add').addEventListener('click', event => {
     <div class="card">
       <div class="card-body" id=${item._id}>
         <h5 class="card-title" style="margin-bottom: 20px;">${item.text}</h5>
-        ${item.isDone ? '<button type="button" class="btn btn-info isDone">Done</button>' : '<button type="button" class="btn btn-warning isDone">Not Done</button>'}
-        <button type="button" class="btn btn-danger delete">Delete</button>
+        <p><a type="button" class="btn btn-info" href="${item.shopping_link}">Shopping Link</a></p>
+        <p><a type="button" class="btn btn-danger" href="${item.video_link}">Video Link</a><p>
     `
     document.getElementById('appearHere').append(itemElem)
     document.getElementById('task').value = ''
   })
   .catch(err => console.log(err))
-})
-
-document.addEventListener('click', event => {
-  if (event.target.classList.contains('delete')) {
-    axios.delete(`/api/items/${event.target.parentNode.id}`)
-    .then(() => {
-      event.target.parentNode.parentNode.parentNode.remove()
-    })
-  }
-  if (event.target.classList.contains('isDone')) {
-    switch(event.target.innerText) {
-      case 'Done':
-        axios.put(`/api/items/${event.target.parentNode.id}`, {
-          isDone: false
-        })
-        .then(() => {
-          event.target.innerText = 'Not Done'
-          event.target.classList = 'btn btn-warning isDone'
-        })
-        .catch(err => console.log(err))
-        break;
-      case 'Not Done':
-        axios.put(`/api/items/${event.target.parentNode.id}`, {
-          isDone: true
-        })
-          .then(() => {
-            event.target.innerText = 'Done'
-            event.target.classList = 'btn btn-info isDone'
-          })
-          .catch(err => console.log(err))
-        break;
-    }
-  }
 })
