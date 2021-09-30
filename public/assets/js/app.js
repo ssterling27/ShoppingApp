@@ -18,7 +18,8 @@ axios.get('/api/items', {
       document.getElementById('appearHere').append(itemElem)
     })
   })
-  .catch(err => window.location = '/login.html')
+
+.catch(err => window.location = '/login.html')
 
 document.getElementById('add').addEventListener('click', event => {
   event.preventDefault()
@@ -45,6 +46,7 @@ document.getElementById('add').addEventListener('click', event => {
         <p><a type="button" class="btn btn-info" href="${item.shopping_link}">Shopping Link</a></p>
         <p><a type="button" class="btn btn-danger" href="${item.video_link}">Video Link</a><p>
     `
+
       document.getElementById('appearHere').append(itemElem)
       document.getElementById('product').value = ''
       document.getElementById('shoppingLink').value = ''
@@ -56,4 +58,3 @@ document.getElementById('add').addEventListener('click', event => {
 document.getElementById('logout').addEventListener('click', event => {
   localStorage.removeItem('token')
   window.location = './login.html'
-})
